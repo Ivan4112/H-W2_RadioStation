@@ -19,6 +19,7 @@ import radioStation.ScheduleRadio.Interview;
 import radioStation.ScheduleRadio.Music;
 import radioStation.ScheduleRadio.ScheduleFactory;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -30,21 +31,23 @@ public class Main {
     }
 
     private static RadioFactory choosePresenter() {
-        int generationPresenter = (int) (1 + Math.random() * 2);
-        RadioFactory radioFactory = null;
+        int generationPresenter = new Random().nextInt(2) + 1;
+        RadioFactory radioFactory = getRadioFactory(generationPresenter);
+
         Presenter presenter;
-        switch (generationPresenter){
-            case 1: radioFactory = new WorkerPresenter();
-                presenter = radioFactory.newPresenter();
-                presenter.getInfoPresenter();
-            break;
-            case 2: radioFactory = new UnemploymentPresenter();
-                presenter = radioFactory.newPresenter();
-                presenter.getInfoPresenter();
-            break;
-            default:
-                System.out.println("No correct value"); break;
+        if(radioFactory!=null) {
+            presenter = radioFactory.newPresenter();
+            presenter.getInfoPresenter();
         }
+        return radioFactory;
+    }
+
+    private static RadioFactory getRadioFactory(int generationPresenter) {
+        RadioFactory radioFactory = switch (generationPresenter) {
+            case 1 -> new WorkerPresenter();
+            case 2 -> new UnemploymentPresenter();
+            default -> null;
+        };
         return radioFactory;
     }
 
@@ -60,7 +63,7 @@ public class Main {
         int spentTimeProgram = 0;
         double sumProfitAdverts = 0;
         double sumProfitInterview = 0;
-        double allProfit = 0;
+        double allProfit;
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Controller's menu\n1. Switch on music\n2. Switch on adverts\n3. Switch on interview");
